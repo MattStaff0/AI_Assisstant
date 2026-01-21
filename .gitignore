@@ -5,3 +5,6 @@
 __pycache__/
 *.wav
 *.mp3
+models/*
+!models/.gitkeep
+.DS_Store/
