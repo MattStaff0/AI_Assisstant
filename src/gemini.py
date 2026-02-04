@@ -8,7 +8,7 @@ ENV_PATH = Path(__file__).resolve().parents[1] / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
 
 class GeminiClient:
-    def __init__(self, model: str = "gemini-2.0-flash"):
+    def __init__(self, model: str = "gemini-2.5-flash-lite"):
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise RuntimeError(f"Missing GEMINI_API_KEY. Expected it in {ENV_PATH}")
