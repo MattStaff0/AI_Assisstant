@@ -1,31 +1,32 @@
+import sys
+from pathlib import Path
+
+# Ensure project root is on sys.path so all imports resolve
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from gpiozero import Button
 from signal import pause
-import time
 
-from gemini import GeminiClient
+from src.audio_io import start_recording, stop_recording
+from src.assistant import run_pipeline
 
-# BCM numbering (GPIO21). Physical pin 40.
-btn = Button(21, pull_up=True, bounce_time=0.05)
 
-gemini = GeminiClient(model="gemini-2.5-flash-lite")
+btn = Button(21, pull_up=True, bounce_time=0.1)
+
 
 def on_press():
-    print(f"PRESSED  @ {time.strftime('%H:%M:%S')}")
-    # This is where the logic should be placed in order to record a voice, this is SPEECH -> TEXT
-    # After this we can either send the api response here or maybe in the on realease since this could just be updating a global variable and use it in on release!
+    print("🎤 Recording...")
+    start_recording()
+
 
 def on_release():
-    # This is where logic for turning the text to speech and then being able to output to speakers to hear
-    print(f"RELEASED @ {time.strftime('%H:%M:%S')}")
-    prompt = "Give me a one-sentence helpful tip for staying productive tonight."
-    try:
-        answer = gemini.ask(prompt)
-        print(f"Gemini: {answer}\n")
-    except Exception as e:
-        print(f"Gemini error: {e}\n")
+    print("⏹️ Stopped recording")
+    wav_path = stop_recording()
+    run_pipeline(wav_path)
+
 
 btn.when_pressed = on_press
 btn.when_released = on_release
 
-print("Ready. Press the button (Ctrl+C to quit).")
+print("🤖 Jarvis ready. Press button to talk (Ctrl+C to quit).")
 pause()
